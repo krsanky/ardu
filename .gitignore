@@ -1,0 +1,9 @@
+*.cpp
+
+.depend
+*.a
+*.hex
+
+*.elf
+*.elf.debug
+*.elf.full
