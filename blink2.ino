@@ -1,11 +1,12 @@
 #include <SPI.h>
 
 /*
- * 1 - Setup the clock such that we get a SQW output 2 - Set the time of the
- * clock 3 - Read the time of the clock
+ * 1 - Setup the clock such that we get a SQW output 
+ * 2 - Set the time of the clock 
+ * 3 - Read the time of the clock
  */
 
-int		chipSelect = 8;
+int		chipSelect = 10; /* SS on DeadOn */
 int		intFreq = 4;
 
 #define WRITE_CONTROL_REG 0x8E
@@ -21,16 +22,20 @@ typedef struct {
 	uint8_t		d;
 	uint8_t		m;
 	uint8_t		y;
-}		timeParameters;
-
+} timeParameters;
 
 void 
 RTC_init(int chipSelect, int intFreq)
 {
 	/*
-	 * The DS3234 offers four output frequencies: Options: 1:     1
-	 * Hz 2:     1.024 kHz 3:     4.096 kHz 4:     8.192 kHz 5:     OFF
-	 */
+ 	 * The DS3234 offers four output frequencies:
+ 	 * Options:
+ 	 * 1:     1     Hz
+ 	 * 2:     1.024 kHz
+ 	 * 3:     4.096 kHz
+ 	 * 4:     8.192 kHz
+ 	 * 5:     OFF
+ 	 */
 
 	pinMode(chipSelect, OUTPUT);
 
@@ -44,14 +49,14 @@ RTC_init(int chipSelect, int intFreq)
 	byte		newConfig;
 
 	if (intFreq == 5) {
-		configModifier = 0 b10111111;
+		configModifier = 0b10111111;
 		newConfig = configModifier & originalConfig;
 	} else if (intFreq < 5) {
 		uint8_t		freqOption = intFreq - 1;
-		configModifier = (freqOption << 3) | 0 b01000000;
-		newConfig = configModifier | (originalConfig & 0 b11100011);
-	} else {
-		newConfig = 0 b11100011;
+		configModifier = (freqOption << 3) | 0b01000000;
+		newConfig = configModifier | (originalConfig & 0b11100011);
+	} else { /* this cond. just to compile it's BOGUS */
+		newConfig = 0b11100011;
 	}
 
 	digitalWrite(chipSelect, LOW);
@@ -169,3 +174,6 @@ loop()
 	Serial.println(timeTrigs);
 	timeTrigs = 0;
 }
+
+
+
